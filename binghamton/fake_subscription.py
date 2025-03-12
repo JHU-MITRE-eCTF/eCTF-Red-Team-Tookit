@@ -1,3 +1,4 @@
+"""Zhong: pirated subscription exp for binghamton"""
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 import struct
@@ -50,8 +51,8 @@ def fake_pirated_sub(own_sub, pirated_sub, faked_sub) -> bytes:
     with open(faked_sub, 'wb') as f:
         f.write(fake_sub)
 
-# print_split_hex16(gen_subscription(0, 0xb804d98f, 1891690566834715, 0x6b87b8843d920, 1).hex())
-# print_split_hex16(gen_subscription(0, 0xb804d98f, 1891690566834715, 0x112238843d920, 1).hex())
-fake_pirated_sub('/Users/jiachengzhong/project/jhu-research/ectf/attack-phase/binghamton_package/own.sub'\
-    , '/Users/jiachengzhong/project/jhu-research/ectf/attack-phase/binghamton_package/pirated.sub',\
-    '/Users/jiachengzhong/project/jhu-research/ectf/attack-phase/binghamton_package/faked.sub')
+print_split_hex16(gen_subscription(0, 0xb804d98f, 0x6b87b8842da1b, 2086914440288678, 1).hex())
+print_split_hex16(gen_subscription(0, 0xb804d98f, 0x6b87b8842da1b, 2087923757603238, 3).hex())
+# fake_pirated_sub('/Users/jiachengzhong/project/jhu-research/ectf/attack-phase/binghamton_package/own.sub'\
+#     , '/Users/jiachengzhong/project/jhu-research/ectf/attack-phase/binghamton_package/pirated.sub',\
+#     '/Users/jiachengzhong/project/jhu-research/ectf/attack-phase/binghamton_package/faked.sub')
