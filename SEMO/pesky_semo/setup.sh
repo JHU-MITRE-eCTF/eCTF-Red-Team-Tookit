@@ -1,6 +1,3 @@
 echo Running setup.sh
-
-echo Installing dependencies...
-pip install cryptography
-
+echo Optionally include this script to install dependencies
 echo Setup Complete
