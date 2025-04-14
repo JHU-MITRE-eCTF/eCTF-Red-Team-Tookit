@@ -1,0 +1,1 @@
+Since target only implemented hmac, flag can be find in plaintext.
