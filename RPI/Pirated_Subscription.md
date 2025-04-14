@@ -1,0 +1,1 @@
+Failed to check device id when update subscription, so simply subscribe and read frames.
